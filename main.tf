@@ -137,3 +137,36 @@ output "vault_server_public_ip" {
 resource "google_compute_address" "static_ip" {
   name = "vault-static-ip"
 }
+
+resource "google_monitoring_alert_policy" "vm_shutdown_alert" {
+  display_name = "VM Instance Shutdown Alert"
+  combiner     = "OR"
+  project      = var.gcp_project_id
+
+  conditions {
+    display_name = "VM is terminated"
+    condition_matched_log {
+      filter = <<EOT
+      resource.type="gce_instance"
+      jsonPayload.event.action="gcp.compute.v1.instance.terminate"
+      EOT
+    }
+  }
+
+  documentation {
+    content   = "An alert has been triggered because a GCE VM instance was terminated."
+    mime_type = "text/markdown"
+  }
+
+  notification_channels = [
+    google_monitoring_notification_channel.email_channel.id,
+  ]
+}
+
+resource "google_monitoring_notification_channel" "email_channel" {
+  display_name = "Email Notification Channel"
+  type         = "email"
+  labels = {
+    email_address = "codingadventurestoday@gamil.com"
+  }
+}
