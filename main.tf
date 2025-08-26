@@ -9,7 +9,6 @@ terraform {
 
 # Provider configuration.
 provider "google" {
-  credentials = file(var.gcp_svc_key)
   project = var.gcp_project_id
   region  = var.gcp_region
   zone = var.gcp_zone
@@ -27,7 +26,8 @@ resource "google_compute_firewall" "allow_vault_traffic" {
     protocol = "tcp"
     ports    = ["8200"] # Default Vault port
   }
-  source_ranges = ["69.113.0.25/32", "add_vm instance_ip"]
+  // update the 
+  source_ranges = ["69.113.0.25/32", "add_vm instance_ip"] 
 }
 
 resource "google_compute_instance" "vault_server" {
@@ -86,10 +86,17 @@ resource "google_compute_instance" "vault_server" {
     storage "file" {
       path = "/etc/vault_user.d/data"
     }
-
+ 
     listener "tcp" {
       //Change to IP address of client vm instance 
       address     = "0.0.0.0:8200"
+      // WARNING: tls_disable is for development only!
+      tls_disable = true 
+    }
+
+    listener "tcp" {
+      //Change to IP address of client vm instance 
+      address     = "68.129.131.117:8200"
       // WARNING: tls_disable is for development only!
       tls_disable = true 
     }
