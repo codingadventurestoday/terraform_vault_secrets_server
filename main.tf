@@ -9,14 +9,13 @@ terraform {
 
 # Provider configuration.
 provider "google" {
+  credentials = file(var.gcp_svc_key)
   project = var.gcp_project_id
   region  = var.gcp_region
   zone = var.gcp_zone
 }
 
 # A simple network and firewall rule.
-# This rule is permissive for demonstration. For production, restrict
-# the source_ranges to your specific IP address for security.
 resource "google_compute_network" "default" {
   name = "vault-network"
 }
@@ -36,7 +35,6 @@ resource "google_compute_instance" "vault_server" {
   machine_type = "e2-micro"
   zone         = var.gcp_zone
 
-  # The boot disk, using a standard Debian image.
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-11"

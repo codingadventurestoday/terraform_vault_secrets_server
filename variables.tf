@@ -1,3 +1,8 @@
+variable "gcp_svc_key" {
+  description = "the GCP service account key"
+  type = string
+}
+
 variable "gcp_project_id" {
   description = "The ID of the Google Cloud project."
   type        = string
