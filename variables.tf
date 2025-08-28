@@ -1,7 +1,6 @@
 variable "gcp_project_id" {
   description = "The ID of the Google Cloud project."
   type        = string
-  default     = "your-gcp-project-id"
 }
 
 variable "gcp_region" {
