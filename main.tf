@@ -27,7 +27,7 @@ resource "google_compute_firewall" "allow_vault_traffic" {
     ports    = ["8200"] # Default Vault port
   }
   // update the 
-  source_ranges = ["69.113.0.25/32", "add_vm instance_ip"] 
+  source_ranges = ["69.119.184.242/32"] 
 }
 
 resource "google_compute_instance" "vault_server" {
@@ -50,7 +50,6 @@ resource "google_compute_instance" "vault_server" {
   }
 
   scheduling {
-    automatic_restart = true
     provisioning_model = "SPOT"
     on_host_maintenance = "TERMINATE"
   }
@@ -157,6 +156,13 @@ resource "google_monitoring_alert_policy" "vm_shutdown_alert" {
       resource.type="gce_instance"
       jsonPayload.event.action="gcp.compute.v1.instance.terminate"
       EOT
+    }
+  }
+
+  alert_strategy {
+    notification_rate_limit {
+      # Sets the notification rate limit to 1 hour (3600 seconds)
+      period = "3600s" 
     }
   }
 
